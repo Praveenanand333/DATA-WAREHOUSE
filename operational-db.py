@@ -16,8 +16,8 @@ num_sales = 100000
 # Connect to MySQL database
 conn = mysql.connector.connect(
     host="localhost",
-    user="your_username",     # Replace with your MySQL username
-    password="your_password", # Replace with your MySQL password
+    user="root",     # Replace with your MySQL username
+    password="", # Replace with your MySQL password
     database="operational_db" # Replace with your database name
 )
 cursor = conn.cursor()
@@ -33,16 +33,15 @@ categories = [random.choice(["Electronics", "Clothing", "Grocery", "Furniture", 
 prices = [round(random.uniform(10, 500), 2) for _ in range(num_items)]
 # Introduce faults
 item_ids[0] = item_ids[1]  # Duplicate ID
-prices[5] = None  # Missing price
 item_table = pd.DataFrame({"ItemID": item_ids, "ItemName": item_names, "Category": categories, "Price": prices})
 
 # Create and insert data into Item table
 cursor.execute("""
 CREATE TABLE Item (
-    ItemID VARCHAR(10) PRIMARY KEY,
+    ItemID VARCHAR(10) ,
     ItemName VARCHAR(255),
     Category VARCHAR(50),
-    Price FLOAT
+    Price FLOAT NULL
 );
 """)
 for _, row in item_table.iterrows():
@@ -58,13 +57,13 @@ months = [date.month for date in date_values]
 days = [date.day for date in date_values]
 weekdays = [date.strftime("%A") for date in date_values]
 # Introduce faults
-years[10] = None  # Missing year
+years[10] = 0 # Missing year
 date_table = pd.DataFrame({"DateID": date_ids, "Year": years, "Month": months, "Day": days, "Weekday": weekdays})
 
 # Create and insert data into Date table
 cursor.execute("""
 CREATE TABLE Date (
-    DateID VARCHAR(10) PRIMARY KEY,
+    DateID VARCHAR(10) ,
     Year INT,
     Month INT,
     Day INT,
@@ -85,7 +84,7 @@ location_table = pd.DataFrame({"LocationID": location_ids, "City": cities, "Stat
 # Create and insert data into Location table
 cursor.execute("""
 CREATE TABLE Location (
-    LocationID VARCHAR(10) PRIMARY KEY,
+    LocationID VARCHAR(10) ,
     City VARCHAR(255),
     State VARCHAR(255),
     Country VARCHAR(50)
@@ -107,7 +106,7 @@ customer_table = pd.DataFrame({"CustomerID": customer_ids, "CustomerName": custo
 # Create and insert data into Customer table
 cursor.execute("""
 CREATE TABLE Customer (
-    CustomerID VARCHAR(10) PRIMARY KEY,
+    CustomerID VARCHAR(10) ,
     CustomerName VARCHAR(255),
     Gender VARCHAR(10),
     Age INT
@@ -132,7 +131,7 @@ sales_table = pd.DataFrame(sales_data)
 # Create and insert data into Sales table
 cursor.execute("""
 CREATE TABLE Sales (
-    SaleID VARCHAR(10) PRIMARY KEY,
+    SaleID VARCHAR(10) ,
     DateID VARCHAR(10),
     ItemID VARCHAR(10),
     LocationID VARCHAR(10),
