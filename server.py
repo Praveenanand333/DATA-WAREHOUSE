@@ -26,7 +26,7 @@ def connect_to_warehouse():
 # OLAP Operations
 def all_data(conn):
     query = """
-        SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month, l.City, l.State
+        SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month, d.Day,l.City, l.State
         FROM Sales s
         JOIN Item i ON s.ItemID = i.ItemID
         JOIN Date d ON s.DateID = d.DateID
@@ -37,7 +37,7 @@ def all_data(conn):
 def slice_data(conn, year, month, day, city, state, country, slicedimension):
     if slicedimension == "city":
         query = """
-            SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month, l.City, l.State
+            SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month,d.Day, l.City, l.State
             FROM Sales s
             JOIN Item i ON s.ItemID = i.ItemID
             JOIN Date d ON s.DateID = d.DateID
@@ -48,7 +48,7 @@ def slice_data(conn, year, month, day, city, state, country, slicedimension):
     
     elif slicedimension == "state":
         query = """
-            SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month, l.City, l.State
+            SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month,d.Day, l.City, l.State
             FROM Sales s
             JOIN Item i ON s.ItemID = i.ItemID
             JOIN Date d ON s.DateID = d.DateID
@@ -59,7 +59,7 @@ def slice_data(conn, year, month, day, city, state, country, slicedimension):
     
     elif slicedimension == "country":
         query = """
-            SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month, l.City, l.State, l.Country
+            SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month,d.Day, l.City, l.State, l.Country
             FROM Sales s
             JOIN Item i ON s.ItemID = i.ItemID
             JOIN Date d ON s.DateID = d.DateID
@@ -70,7 +70,7 @@ def slice_data(conn, year, month, day, city, state, country, slicedimension):
     
     elif slicedimension == "year":
         query = """
-            SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month, l.City, l.State
+            SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month,d.Day, l.City, l.State
             FROM Sales s
             JOIN Item i ON s.ItemID = i.ItemID
             JOIN Date d ON s.DateID = d.DateID
@@ -81,7 +81,7 @@ def slice_data(conn, year, month, day, city, state, country, slicedimension):
     
     elif slicedimension == "month":
         query = """
-            SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month, l.City, l.State
+            SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month,d.Day, l.City, l.State
             FROM Sales s
             JOIN Item i ON s.ItemID = i.ItemID
             JOIN Date d ON s.DateID = d.DateID
@@ -110,7 +110,7 @@ def dice_data(conn, year, month, day, city, state, country, dicedimension1, dice
     if dicedimension1 == "city":
         if dicedimension2 == "year":
             query = """
-                SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month, l.City, l.State
+                SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month,d.Day, l.City, l.State
                 FROM Sales s
                 JOIN Item i ON s.ItemID = i.ItemID
                 JOIN Date d ON s.DateID = d.DateID
@@ -121,7 +121,7 @@ def dice_data(conn, year, month, day, city, state, country, dicedimension1, dice
 
         elif dicedimension2 == "month":
             query = """
-                SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month, l.City, l.State
+                SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month,d.Day, l.City, l.State
                 FROM Sales s
                 JOIN Item i ON s.ItemID = i.ItemID
                 JOIN Date d ON s.DateID = d.DateID
@@ -132,7 +132,7 @@ def dice_data(conn, year, month, day, city, state, country, dicedimension1, dice
 
         elif dicedimension2 == "day":
             query = """
-                SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month, d.Day, l.City, l.State
+                SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month,d.Day, d.Day, l.City, l.State
                 FROM Sales s
                 JOIN Item i ON s.ItemID = i.ItemID
                 JOIN Date d ON s.DateID = d.DateID
@@ -144,7 +144,7 @@ def dice_data(conn, year, month, day, city, state, country, dicedimension1, dice
     elif dicedimension1 == "state":
         if dicedimension2 == "year":
             query = """
-                SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month, l.City, l.State
+                SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month,d.Day, l.City, l.State
                 FROM Sales s
                 JOIN Item i ON s.ItemID = i.ItemID
                 JOIN Date d ON s.DateID = d.DateID
@@ -155,7 +155,7 @@ def dice_data(conn, year, month, day, city, state, country, dicedimension1, dice
 
         elif dicedimension2 == "month":
             query = """
-                SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month, l.City, l.State
+                SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month,d.Day, l.City, l.State
                 FROM Sales s
                 JOIN Item i ON s.ItemID = i.ItemID
                 JOIN Date d ON s.DateID = d.DateID
@@ -166,7 +166,7 @@ def dice_data(conn, year, month, day, city, state, country, dicedimension1, dice
 
         elif dicedimension2 == "day":
             query = """
-                SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month, d.Day, l.City, l.State
+                SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month,d.Day, d.Day, l.City, l.State
                 FROM Sales s
                 JOIN Item i ON s.ItemID = i.ItemID
                 JOIN Date d ON s.DateID = d.DateID
@@ -178,7 +178,7 @@ def dice_data(conn, year, month, day, city, state, country, dicedimension1, dice
     elif dicedimension1 == "country":
         if dicedimension2 == "year":
             query = """
-                SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month, l.City, l.State, l.Country
+                SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month,d.Day, l.City, l.State, l.Country
                 FROM Sales s
                 JOIN Item i ON s.ItemID = i.ItemID
                 JOIN Date d ON s.DateID = d.DateID
@@ -189,7 +189,7 @@ def dice_data(conn, year, month, day, city, state, country, dicedimension1, dice
 
         elif dicedimension2 == "month":
             query = """
-                SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month, l.City, l.State, l.Country
+                SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month,d.Day, l.City, l.State, l.Country
                 FROM Sales s
                 JOIN Item i ON s.ItemID = i.ItemID
                 JOIN Date d ON s.DateID = d.DateID
@@ -200,7 +200,7 @@ def dice_data(conn, year, month, day, city, state, country, dicedimension1, dice
 
         elif dicedimension2 == "day":
             query = """
-                SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month, d.Day, l.City, l.State, l.Country
+                SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month,d.Day, d.Day, l.City, l.State, l.Country
                 FROM Sales s
                 JOIN Item i ON s.ItemID = i.ItemID
                 JOIN Date d ON s.DateID = d.DateID
