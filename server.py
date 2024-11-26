@@ -6,14 +6,14 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-# Connect to the data warehouse
+
 def connect_to_warehouse():
     try:
         conn = mysql.connector.connect(
-            host="localhost",       # Your MySQL host (e.g., "localhost")
-            user="root",            # Your MySQL username
-            password="",           # Your MySQL password
-            database="data_warehouse"  # Your cleaned data warehouse name
+            host="localhost",       
+            user="root",            
+            password="",           
+            database="data_warehouse"  
         )
         if conn.is_connected():
             print("Connected to the data warehouse")
@@ -23,7 +23,7 @@ def connect_to_warehouse():
         return None
 
 
-# OLAP Operations
+
 def all_data(conn):
     query = """
         SELECT i.ItemName, s.Quantity, s.TotalPrice, d.Year, d.Month, d.Day,l.City, l.State
@@ -33,7 +33,7 @@ def all_data(conn):
         JOIN Location l ON s.LocationID = l.LocationID;
     """
     return pd.read_sql(query, conn)
-# 1. Slicing: Sales data for a specific year and month
+
 def slice_data(conn, year, month, day, city, state, country, slicedimension):
     if slicedimension == "city":
         query = """
@@ -105,7 +105,7 @@ def slice_data(conn, year, month, day, city, state, country, slicedimension):
         return None
     
 
-# 2. Dicing: Sales data based on selected dimension (Sales, Time, Location)
+
 def dice_data(conn, year, month, day, city, state, country, dicedimension1, dicedimension2):
     if dicedimension1 == "city":
         if dicedimension2 == "year":
@@ -211,9 +211,9 @@ def dice_data(conn, year, month, day, city, state, country, dicedimension1, dice
 
     else:
         return None
- # Return an empty DataFrame for invalid dimension
+ 
 
-# 3. Roll-up: Aggregated sales by year
+
 def roll_up_data(conn, year, month):
     query = """
         SELECT d.Year, SUM(s.Quantity) AS TotalQuantity, SUM(s.TotalPrice) AS TotalSales
@@ -224,7 +224,7 @@ def roll_up_data(conn, year, month):
     """
     return pd.read_sql(query, conn, params=(year, month))
 
-# 4. Drill-down: Sales for an item across locations
+
 def drill_down_data(conn, item_name):
     query = """
         SELECT l.City, l.State, s.Quantity, s.TotalPrice
@@ -236,9 +236,9 @@ def drill_down_data(conn, item_name):
     return pd.read_sql(query, conn, params=(item_name,))
 
 
-# API Endpoints
 
-# Endpoint to fetch 3D sales data (can be used for slicing, dicing, drill-down)
+
+
 @app.route('/fetch_sales_data', methods=['GET'])
 def fetch_sales_data():
     year = request.args.get('year', default=2023, type=int)

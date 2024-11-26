@@ -2,19 +2,19 @@ import pandas as pd
 import mysql.connector
 from mysql.connector import Error
 
-# Connect to the operational database (MySQL)
+
 try:
     source_conn = mysql.connector.connect(
-        host="localhost",       # Your MySQL host (e.g., "localhost")
-        user="root",   # Your MySQL username
-        password="", # Your MySQL password
-        database="operational_db"  # Your operational database name
+        host="localhost",       
+        user="root",   
+        password="", 
+        database="operational_db"  
     )
     
     if source_conn.is_connected():
         print("Connected to the operational database")
 
-    # Extract data from the operational database
+    
     item_table = pd.read_sql("SELECT * FROM Item", source_conn)
     date_table = pd.read_sql("SELECT * FROM Date", source_conn)
     location_table = pd.read_sql("SELECT * FROM Location", source_conn)
@@ -28,47 +28,47 @@ finally:
         source_conn.close()
         print("Source connection closed")
 
-# Transformation Functions
+
 def clean_item_table(df):
-    # Remove duplicate rows based on ItemID
+    
     df = df.drop_duplicates(subset="ItemID")
-    # Fill missing prices with the average price
+    
     df["Price"] = df["Price"].fillna(df["Price"].mean())
     return df
 
 def clean_date_table(df):
-    # Remove rows with missing years
+    
     df = df.dropna(subset=["Year"])
     return df
 
 def clean_location_table(df):
-    # Fill missing countries with "Unknown"
+    
     df["Country"] = df["Country"].fillna("Unknown")
     return df
 
 def clean_customer_table(df):
-    # Remove rows with invalid ages (e.g., negative values)
+    
     df = df[df["Age"] > 0]
     return df
 
 def clean_sales_table(df, valid_item_ids, valid_date_ids, valid_location_ids, valid_customer_ids):
-    # Remove rows with invalid foreign keys
+    
     df = df[df["ItemID"].isin(valid_item_ids)]
     df = df[df["DateID"].isin(valid_date_ids)]
     df = df[df["LocationID"].isin(valid_location_ids)]
     df = df[df["CustomerID"].isin(valid_customer_ids)]
     
-    # Remove duplicate SaleID values to avoid primary key violations
+    
     df = df.drop_duplicates(subset="SaleID")
     return df
 
-# Clean dimension tables
+
 item_table_cleaned = clean_item_table(item_table)
 date_table_cleaned = clean_date_table(date_table)
 location_table_cleaned = clean_location_table(location_table)
 customer_table_cleaned = clean_customer_table(customer_table)
 
-# Clean fact table
+
 sales_table_cleaned = clean_sales_table(
     sales_table,
     valid_item_ids=item_table_cleaned["ItemID"],
@@ -77,24 +77,24 @@ sales_table_cleaned = clean_sales_table(
     valid_customer_ids=customer_table_cleaned["CustomerID"],
 )
 
-# Connect to the target data warehouse database (MySQL)
+
 try:
     target_conn = mysql.connector.connect(
-        host="localhost",       # Your MySQL host (e.g., "localhost")
-        user="root",   # Your MySQL username
-        password="", # Your MySQL password
-        database="data_warehouse"  # Your cleaned data warehouse database name
+        host="localhost",       
+        user="root",   
+        password="", 
+        database="data_warehouse"  
     )
 
     if target_conn.is_connected():
         print("Connected to the target data warehouse")
 
-    # Create a cursor for executing SQL queries
+    
     cursor = target_conn.cursor()
 
-    # Create tables in the target data warehouse with proper key constraints
+    
 
-    # Item Table
+    
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS Item (
             ItemID VARCHAR(10) PRIMARY KEY,
@@ -104,7 +104,7 @@ try:
         );
     """)
 
-    # Date Table
+    
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS Date (
             DateID VARCHAR(10) PRIMARY KEY,
@@ -115,7 +115,7 @@ try:
         );
     """)
 
-    # Location Table
+    
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS Location (
             LocationID VARCHAR(10) PRIMARY KEY,
@@ -125,7 +125,7 @@ try:
         );
     """)
 
-    # Customer Table
+    
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS Customer (
             CustomerID VARCHAR(10) PRIMARY KEY,
@@ -135,7 +135,7 @@ try:
         );
     """)
 
-    # Sales Table (Fact Table) with foreign keys to enforce referential integrity
+    
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS Sales (
             SaleID VARCHAR(10) PRIMARY KEY,
@@ -152,7 +152,7 @@ try:
         );
     """)
 
-    # Insert cleaned data into the target data warehouse
+    
     for _, row in item_table_cleaned.iterrows():
         cursor.execute("INSERT INTO Item (ItemID, ItemName, Category, Price) VALUES (%s, %s, %s, %s)",
                        (row["ItemID"], row["ItemName"], row["Category"], row["Price"]))
@@ -175,7 +175,7 @@ try:
             VALUES (%s, %s, %s, %s, %s, %s, %s)
         """, (row["SaleID"], row["DateID"], row["ItemID"], row["LocationID"], row["CustomerID"], row["Quantity"], row["TotalPrice"]))
 
-    # Commit the transaction
+    
     target_conn.commit()
 
 except Error as e:
